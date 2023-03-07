@@ -27,6 +27,7 @@ public class LaserEmiter : MonoBehaviour
         Debug.Log("1st reflection: " + Vector2.Reflect(-transform.right, hitInfo.normal));
         Debug.Log("right vector:" + (Vector2)transform.right);
         Vector2 mirrorHitPoint = -transform.right;
+        //test siema
         Vector2 mirrorHitNormal = Vector2.zero;
 
         for (int i = 0; i < reflections; i++)
