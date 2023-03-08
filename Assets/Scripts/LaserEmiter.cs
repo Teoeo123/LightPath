@@ -24,12 +24,12 @@ public class LaserEmiter : MonoBehaviour
         
         RaycastHit2D hitInfo = Physics2D.Raycast((Vector2)transform.position, transform.right, MaxRayDistance, LayerDetection);
         bool isMirror = false;
-        Debug.Log("1st normal: " + hitInfo.normal);
         Vector2 mirrorHitPoint = Vector2.zero;
         Vector2 mirrorHitNormal = Vector2.zero;
         Vector2 mirrorLastHitPoint = (Vector2)transform.position;
-        Debug.Log("1st vector: " + (hitInfo.collider ? (hitInfo.point - mirrorLastHitPoint).normalized : "null" ));
-        Debug.Log("1st reflection: " + (hitInfo.collider ? Vector2.Reflect((hitInfo.point - mirrorLastHitPoint).normalized, hitInfo.normal) : "null"));
+        //Debug.Log("1st normal: " + hitInfo.normal);
+        //Debug.Log("1st vector: " + (hitInfo.collider ? (hitInfo.point - mirrorLastHitPoint).normalized : "null" ));
+        //Debug.Log("1st reflection: " + (hitInfo.collider ? Vector2.Reflect((hitInfo.point - mirrorLastHitPoint).normalized, hitInfo.normal) : "null"));
 
         for (int i = 0; i < reflections; i++)
         {
