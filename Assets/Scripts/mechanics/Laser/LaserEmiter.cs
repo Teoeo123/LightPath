@@ -1,19 +1,28 @@
+using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public class LaserEmiter : MonoBehaviour
 {
     public LineRenderer LineOfSight;
+    public int index;
 
     public int reflections;
     public float MaxRayDistance;
     public LayerMask LayerDetection;
+
+    private bool _reciverState = false;
+    private bool _reciverLastState = false;
+
     // Start is called before the first frame update
     void Start()
     {
         Physics2D.queriesStartInColliders = false;
+        Debug.Log("loaded", this);
     }
 
     // Update is called once per frame
@@ -46,6 +55,12 @@ public class LaserEmiter : MonoBehaviour
                     if(hitInfo.collider != null) mirrorLastHitPoint= mirrorHitPoint;
                     isMirror = true;
                 }
+                else if(hitInfo.collider.CompareTag("Reciver"))
+                {
+                    GlobalEvents.current.OnReciverHit(this, new ReciverHitEventArgs() { laserindex = index });
+                    _reciverState= true;
+                    break;
+                }
                 else break;
             }
             else
@@ -63,5 +78,14 @@ public class LaserEmiter : MonoBehaviour
             }
         }
 
+        if (_reciverState && !_reciverLastState)
+            GlobalEvents.current.OnReciverEnter(this, new ReciverHitEventArgs() { laserindex = index });
+        else if (!_reciverState && _reciverLastState)
+            GlobalEvents.current.OnReciverExit(this, new ReciverHitEventArgs() { laserindex = index });
+
+        _reciverLastState = _reciverState;
+        _reciverState = false;
+
     }
+
 }

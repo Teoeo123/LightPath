@@ -11,11 +11,6 @@ public class Dragable : MonoBehaviour
     private Vector2 windowOffset;
     private Vector2 fixPosition;
     private bool _dragable=false;
-    MeshRenderer m_Renderer;
-    private void Start()
-    {
-        m_Renderer = GetComponent<MeshRenderer>();
-    }
 
     // Update is called once per frame
     void Update()
@@ -26,7 +21,6 @@ public class Dragable : MonoBehaviour
             if (Input.GetKey(KeyCode.Mouse0) && isDragable)
             {
                 transform.position = windowOffset + fixPosition;
-                Debug.Log("fix pos: " + (windowOffset + fixPosition) );
             }
             else _dragable = false;
         }
@@ -44,14 +38,5 @@ public class Dragable : MonoBehaviour
 
     }
 
-    private void OnMouseDown()
-    {
-        
-    }
-
-    private void OnMouseEnter()
-    {
-
-    }
 
 }
