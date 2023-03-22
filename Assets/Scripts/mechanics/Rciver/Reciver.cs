@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+
 using UnityEngine;
 
 public class Reciver : MonoBehaviour
 {
+    public GameObject thisObject;
     public int index;
     // Start is called before the first frame update
     void Start()
@@ -17,7 +15,7 @@ public class Reciver : MonoBehaviour
     // Update is called once per frame
     void OnLaserEnter(object sender,ReciverHitEventArgs args)
     {
-        if (index == args.laserindex)
+        if (index == args.laserindex && args.hitobject == thisObject)
         {
             GetComponent<SpriteRenderer>().color = Color.green;
             Debug.Log(this + ": enter");
@@ -26,7 +24,7 @@ public class Reciver : MonoBehaviour
 
     void OnLaserExit(object sender,ReciverHitEventArgs args)
     {
-        if (index == args.laserindex)
+        if (index == args.laserindex && args.hitobject == thisObject)
         {
             GetComponent<SpriteRenderer>().color = Color.black;
             Debug.Log(this + ": exit");
