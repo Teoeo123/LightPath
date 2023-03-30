@@ -1,10 +1,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Laser;
+using UnityEditor.PackageManager;
 
 public class LaserEmiter : MonoBehaviour
 {
@@ -18,24 +18,26 @@ public class LaserEmiter : MonoBehaviour
     public float lightTransmittingDencity;
     [Range(0.0f, 0.1f)]
     public float glow;
+    [Range(0f,1f)]
+    public float AbsorptionRate;
 
-    private List<LineRenderer> lineHolder = new List<LineRenderer>();
+    private LaserBeam lines;
+    private List<LineRenderer> _dynamicLines;
+    private List<LineRenderer> _toDesDynamicLines;
     private bool _reciverState = false;
     private bool _reciverLastState = false;
     private GameObject _reciver;
-
     // Start is called before the first frame update
     void Start()
     {
-        Physics2D.queriesStartInColliders = false;
+        lines = new LaserBeam(LineOfSight);
+        _dynamicLines = new List<LineRenderer>();
+        Physics2D.queriesStartInColliders = false;    
     }
 
     // Update is called once per frame
     void Update()
-    {
-        LineOfSight.positionCount = 1;
-        LineOfSight.SetPosition(0, transform.position);
-        
+    {   
         RaycastHit2D hitInfo = Physics2D.Raycast((Vector2)transform.position, transform.right, MaxRayDistance, LayerDetection);
         bool colision = false;
         bool insideGlassState = false;
@@ -44,8 +46,19 @@ public class LaserEmiter : MonoBehaviour
         Vector2 outputDirection = Vector2.zero;
         Vector2 mirrorLastHitPoint = (Vector2)transform.position;
 
-        recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlassState, reflections, 1.0f);
+        recLightRef(
+            hitInfo, 
+            mirrorLastHitPoint, 
+            mirrorHitPoint, 
+            mirrorHitNormal, 
+            outputDirection, 
+            colision, 
+            insideGlassState, 
+            reflections, 
+            0.5f
+            );
 
+        
         if (_reciverState && !_reciverLastState)
             GlobalEvents.current.OnReciverEnter(this, new ReciverHitEventArgs() { laserindex = index, hitobject=_reciver });
         else if (!_reciverState && _reciverLastState)
@@ -53,28 +66,27 @@ public class LaserEmiter : MonoBehaviour
 
         _reciverLastState = _reciverState;
         _reciverState = false;
+        lines.Update();
     }
 
     private void recLightRef(RaycastHit2D hitInfo, Vector2 mirrorLastHitPoint, Vector2 mirrorHitPoint, Vector2 mirrorHitNormal, Vector2 outputDirection, bool colision, bool insideGlass, int reflections, float power)
     {
 
-        if(reflections>0)
+        if(reflections>0 && power>0.01f)
         {
-            LineOfSight.positionCount += 1;
             if (hitInfo.collider != null)
             {
                 mirrorHitPoint = hitInfo.point;
                 mirrorHitNormal = hitInfo.normal;
                 outputDirection = Vector2.Reflect((mirrorHitPoint - mirrorLastHitPoint).normalized, mirrorHitNormal);
 
-                LineOfSight.SetPosition(LineOfSight.positionCount - 1, hitInfo.point);
-
+                lines.SetLine(mirrorLastHitPoint, mirrorHitPoint, power);
                 if (hitInfo.collider.CompareTag("Mirror"))
                 {
                     hitInfo = Physics2D.Raycast(mirrorHitPoint, outputDirection, MaxRayDistance, LayerDetection);
                     if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
                     colision = true;
-                    recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power - 0.01f);
+                    recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power * AbsorptionRate);
                 }
                 else if (hitInfo.collider.CompareTag("Reciver"))
                 {
@@ -89,51 +101,63 @@ public class LaserEmiter : MonoBehaviour
                     double Alpha = Vector2.SignedAngle(mirrorHitNormal, arrivalDirection) + 180;
                     double AlphaRad = Math.PI * Alpha / 180.0;
                     float sinBeta = (insideGlass) ? (float)Math.Sin(AlphaRad) / (float)Math.Pow(lightTransmittingDencity, -1) : (float)Math.Sin(AlphaRad) / lightTransmittingDencity;
+                    var bufAng = (float)Math.Abs(Math.Abs(Alpha - 180) - 90) / 90f;
+
+                    float aPower= 1.0f - bufAng, bPower=bufAng;
+
                     if (Math.Abs(sinBeta) > 1)
                     {
+                        bPower = aPower;
+                        aPower = bufAng;
                         outputDirection = Vector2.Reflect((mirrorHitPoint - mirrorLastHitPoint).normalized, mirrorHitNormal);
                         hitInfo = Physics2D.Raycast(mirrorHitPoint + outputDirection.normalized / 100, outputDirection, MaxRayDistance, LayerDetection);
                     }
                     else
                     {
                         float cosBeta = (float)Math.Sqrt(1 - Math.Pow(sinBeta, 2));
+
+                        outputDirection = Vector2.Reflect((mirrorHitPoint - mirrorLastHitPoint).normalized, mirrorHitNormal);
+                        hitInfo = Physics2D.Raycast(mirrorHitPoint + outputDirection.normalized / 100, outputDirection, MaxRayDistance, LayerDetection);
+                        if (insideGlass) hitInfo = InsideGlassColison(hitInfo, mirrorHitPoint, outputDirection);
+                        if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
+                        
+                        Debug.Log(bufAng +", " + insideGlass);
+                        recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power * aPower * AbsorptionRate);
+
                         insideGlass = !insideGlass;
                         if (Alpha > 90 && Alpha < 270) cosBeta = -cosBeta;
                         outputDirection = new Vector2((-mirrorHitNormal.x * cosBeta) - (sinBeta * -mirrorHitNormal.y), (-mirrorHitNormal.x * sinBeta) + (cosBeta * -mirrorHitNormal.y));
                         hitInfo = Physics2D.Raycast(mirrorHitPoint + outputDirection.normalized / 100, outputDirection, MaxRayDistance, LayerDetection);
                     }
 
-                    if (insideGlass)
-                    {
-                        Vector2 buforVector;
-                        if (hitInfo.collider == null)
-                            buforVector = mirrorHitPoint + outputDirection.normalized * MaxRayDistance;
-                        else
-                            buforVector = hitInfo.point;
-                        hitInfo = Physics2D.Raycast(buforVector - outputDirection.normalized / 100, -outputDirection, MaxRayDistance, LayerDetection);
-                    }
+                    if (insideGlass) hitInfo = InsideGlassColison(hitInfo, mirrorHitPoint, outputDirection);
 
                     if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
-                    recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power - 0.01f);
+                    recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power * bPower * AbsorptionRate);
                 }
             }
             else
             {
                 if (colision)
                 {
-                    LineOfSight.SetPosition(LineOfSight.positionCount - 1, mirrorHitPoint + outputDirection * MaxRayDistance);
+                    lines.SetLine(mirrorHitPoint, mirrorHitPoint + outputDirection * MaxRayDistance, power);
                 }
                 else
                 {
-                    LineOfSight.SetPosition(LineOfSight.positionCount - 1, transform.position + transform.right * MaxRayDistance);
+                    lines.SetLine(mirrorLastHitPoint, transform.position + transform.right * MaxRayDistance, power);
                 }
             }
-
-            
         }
-
     }
 
-
+    private RaycastHit2D InsideGlassColison(RaycastHit2D hInfo, Vector2 hitPoint, Vector2 direction)
+    {
+        Vector2 buforVector;
+        if (hInfo.collider == null)
+            buforVector = hitPoint + direction.normalized * MaxRayDistance;
+        else
+            buforVector = hInfo.point;
+        return Physics2D.Raycast(buforVector - direction.normalized / 100, -direction, MaxRayDistance, LayerDetection);
+    }
 
 }
