@@ -34,8 +34,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _AnimSpeed: 3
-    - _Brithness: 25
+    - _AnimSpeed: 5
+    - _Brithness: 35
     - _MinBrithness: 0.1
     - _Smoothness: 1.8
     - _Thicness: 2

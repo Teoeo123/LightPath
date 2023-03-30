@@ -1,14 +1,13 @@
-
 using System;
-using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Laser;
-using UnityEditor.PackageManager;
+
 
 public class LaserEmiter : MonoBehaviour
 {
     public LineRenderer LineOfSight;
+    public ParticleSystem particleSample;
     public int index;
     public double refractionFactor;
     public int reflections;
@@ -16,22 +15,22 @@ public class LaserEmiter : MonoBehaviour
     public LayerMask LayerDetection;
     [Range(1.0f, 2.0f)]
     public float lightTransmittingDencity;
-    [Range(0.0f, 0.1f)]
+    [Range(0.0f, 1.0f)]
     public float glow;
     [Range(0f,1f)]
     public float AbsorptionRate;
 
+    private LaserHitParticles particles;
     private LaserBeam lines;
-    private List<LineRenderer> _dynamicLines;
-    private List<LineRenderer> _toDesDynamicLines;
     private bool _reciverState = false;
     private bool _reciverLastState = false;
     private GameObject _reciver;
+
     // Start is called before the first frame update
     void Start()
     {
+        particles = new LaserHitParticles(particleSample,LineOfSight.startColor);
         lines = new LaserBeam(LineOfSight);
-        _dynamicLines = new List<LineRenderer>();
         Physics2D.queriesStartInColliders = false;    
     }
 
@@ -58,15 +57,15 @@ public class LaserEmiter : MonoBehaviour
             0.5f
             );
 
-        
         if (_reciverState && !_reciverLastState)
             GlobalEvents.current.OnReciverEnter(this, new ReciverHitEventArgs() { laserindex = index, hitobject=_reciver });
         else if (!_reciverState && _reciverLastState)
             GlobalEvents.current.OnReciverExit(this, new ReciverHitEventArgs() { laserindex = index, hitobject = _reciver });
-
         _reciverLastState = _reciverState;
         _reciverState = false;
         lines.Update();
+        particles.Delete(glow);
+
     }
 
     private void recLightRef(RaycastHit2D hitInfo, Vector2 mirrorLastHitPoint, Vector2 mirrorHitPoint, Vector2 mirrorHitNormal, Vector2 outputDirection, bool colision, bool insideGlass, int reflections, float power)
@@ -81,8 +80,10 @@ public class LaserEmiter : MonoBehaviour
                 outputDirection = Vector2.Reflect((mirrorHitPoint - mirrorLastHitPoint).normalized, mirrorHitNormal);
 
                 lines.SetLine(mirrorLastHitPoint, mirrorHitPoint, power);
+
                 if (hitInfo.collider.CompareTag("Mirror"))
                 {
+                    particles.SetParticle(mirrorHitPoint, mirrorHitNormal);
                     hitInfo = Physics2D.Raycast(mirrorHitPoint, outputDirection, MaxRayDistance, LayerDetection);
                     if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
                     colision = true;

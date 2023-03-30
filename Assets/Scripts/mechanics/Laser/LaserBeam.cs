@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Unity.VisualScripting;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Laser
@@ -9,17 +7,17 @@ namespace Laser
     {
         private List<LineRenderer> buforBeams = new List<LineRenderer>();
         private List<LineRenderer> displayBeams = new List<LineRenderer>();
-        private LineRenderer reference;
-        public LaserBeam(LineRenderer reference)
+        private LineRenderer sample;
+        public LaserBeam(LineRenderer sample)
         {
-            reference.positionCount= 0;
-            reference.forceRenderingOff = true;
-            this.reference = reference;
+            sample.positionCount= 0;
+            sample.forceRenderingOff = true;
+            this.sample = sample;
         }
 
         public void SetLine(Vector2 from, Vector2 to, float opacity =1f)
         {
-            var buf = UnityEngine.Object.Instantiate(reference);
+            var buf = UnityEngine.Object.Instantiate(sample);
             buf.positionCount = 2;
             buf.SetPosition(0, from);
             buf.SetPosition(1, to);
