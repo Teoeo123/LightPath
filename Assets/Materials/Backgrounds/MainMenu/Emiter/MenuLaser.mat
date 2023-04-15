@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Title
-  m_Shader: {fileID: -6465566751694194690, guid: b02e1c89215b3e04b80c0b0babfe2ca4, type: 3}
+  m_Name: MenuLaser
+  m_Shader: {fileID: -6465566751694194690, guid: 2e3dcb0828bf0c64da057f7ebb45a9ed, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -20,22 +20,6 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_80ed8cd64b564ac7b107dc5117f1cdc1_Texture_1:
-        m_Texture: {fileID: 2800000, guid: 0856860f3b52b314e8f7ad56a32e33ca, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_b8b1cf3c02aa4797ba6bfcb9d174ef01_Texture_1:
-        m_Texture: {fileID: 2800000, guid: 0856860f3b52b314e8f7ad56a32e33ca, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_fb4161dab4a54c86af267c92c94d9b57_Texture_1:
-        m_Texture: {fileID: 2800000, guid: 0856860f3b52b314e8f7ad56a32e33ca, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -50,15 +34,16 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _3D: 0.181
     - _AnimSpeed: 5
-    - _Brithness: 25
+    - _Brithness: 5
+    - _MaxThicness: -0.06
     - _MinBrithness: 0.1
     - _Smoothness: 1.8
+    - _SmoothnessIn: 6.35
+    - _SmoothnessOut: 3.32
+    - _Thickness: -0.96
     - _Thicness: 2
-    - _bloom: 2.33
     - _size: 0.8
-    - _speed: -0.17
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
