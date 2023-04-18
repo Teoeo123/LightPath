@@ -10,6 +10,8 @@ public class Hover : MonoBehaviour
     public List<ParticleSystem> particles=new List<ParticleSystem>();
     public List<Light2DBase> lights =new List<Light2DBase>();
     public TextMeshProUGUI text;
+    public Color colorOff;
+    public Color colorOn;
     [Range(0f, 50f)]
     public float speed;
     private bool animation = false;
@@ -43,6 +45,7 @@ public class Hover : MonoBehaviour
         line.enabled = true;
         foreach (ParticleSystem p in particles) p.Play();
         foreach (Light2DBase l in lights) l.enabled = true;
+        text.color = colorOn;
     }
 
     private void OnMouseExit()
@@ -51,13 +54,14 @@ public class Hover : MonoBehaviour
         //line.enabled = false;
         foreach (ParticleSystem p in particles) p.Stop();
         foreach (Light2DBase l in lights) l.enabled = false;
+        text.color = colorOff;
     }
 
     private void Animation()
     {
         if (animation)
         {
-            if(xbuf>=x)
+            if(xbuf>x)
             {
                 vec.x = xbuf;
                 line.SetPosition(0, vec);
