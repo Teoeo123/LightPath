@@ -12,12 +12,15 @@ public class Hover : MonoBehaviour
     public TextMeshProUGUI text;
     public Color colorOff;
     public Color colorOn;
+    public string btName;
     [Range(0f, 50f)]
     public float speed;
-    private bool animation = false;
+
+    private bool Banimation = false;
     private float x, xbuf=0;
     private float y;
     private Vector3 vec = new Vector3(0,0,0);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,7 +43,7 @@ public class Hover : MonoBehaviour
 
     private void OnMouseEnter()
     {
-        animation = true;
+        Banimation = true;
         Debug.Log("enter");
         line.enabled = true;
         foreach (ParticleSystem p in particles) p.Play();
@@ -50,16 +53,24 @@ public class Hover : MonoBehaviour
 
     private void OnMouseExit()
     {   
-        animation = false;
+        Banimation = false;
         //line.enabled = false;
         foreach (ParticleSystem p in particles) p.Stop();
         foreach (Light2DBase l in lights) l.enabled = false;
         text.color = colorOff;
     }
 
+    public void OnMouseDown()
+    {
+        GlobalEvents.current.OnMenuBtClick(this, new MenuBtClickEventArgs() { btName = this.btName });
+    }
+
+
+
+
     private void Animation()
     {
-        if (animation)
+        if (Banimation)
         {
             if(xbuf>x)
             {

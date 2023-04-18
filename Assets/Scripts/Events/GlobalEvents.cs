@@ -3,10 +3,14 @@ using UnityEngine;
 public class GlobalEvents : MonoBehaviour
 {
     public static GlobalEvents current;
+
     public delegate void ReciverEventEventHandler(object sender, ReciverHitEventArgs eventArgs);
     public event ReciverEventEventHandler ReciverHit;
     public event ReciverEventEventHandler ReciverEnter;
     public event ReciverEventEventHandler ReciverExit;
+
+    public delegate void MenuBtClick(object sender, MenuBtClickEventArgs eventArgs);
+    public event MenuBtClick MBtClick;
 
     // Start is called before the first frame update
     private void Awake()
@@ -35,6 +39,14 @@ public class GlobalEvents : MonoBehaviour
         if (ReciverExit != null)
         {
             ReciverExit(sender, eventArgs);
+        }
+    }
+
+    public virtual void OnMenuBtClick(object sender, MenuBtClickEventArgs eventArgs )
+    {
+        if(MBtClick != null)
+        {
+            MBtClick(sender, eventArgs);
         }
     }
 
