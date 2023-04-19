@@ -4,8 +4,8 @@ public class Dragable : MonoBehaviour
 {
     public bool isDragable;
 
-    private Vector2 windowOffset;
-    private Vector2 fixPosition;
+    private Vector3 windowOffset;
+    private Vector3 fixPosition =Vector3.zero;
     private bool _dragable=false;
 
     // Update is called once per frame
@@ -28,7 +28,7 @@ public class Dragable : MonoBehaviour
         if(!_dragable)
         {
             windowOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            fixPosition = (Vector2)transform.position - windowOffset;
+            fixPosition = (Vector3)transform.position - windowOffset;
         }
         _dragable= true;
 

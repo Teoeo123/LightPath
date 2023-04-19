@@ -35,6 +35,7 @@ public class LaserEmiter : MonoBehaviour
     }
 
     // Update is called once per frame
+    [Obsolete]
     void Update()
     {   
         RaycastHit2D hitInfo = Physics2D.Raycast((Vector2)transform.position, transform.right, MaxRayDistance, LayerDetection);
@@ -68,6 +69,7 @@ public class LaserEmiter : MonoBehaviour
 
     }
 
+    [Obsolete]
     private void recLightRef(RaycastHit2D hitInfo, Vector2 mirrorLastHitPoint, Vector2 mirrorHitPoint, Vector2 mirrorHitNormal, Vector2 outputDirection, bool colision, bool insideGlass, int reflections, float power)
     {
 
@@ -83,7 +85,8 @@ public class LaserEmiter : MonoBehaviour
 
                 if (hitInfo.collider.CompareTag("Mirror"))
                 {
-                    particles.SetParticle(mirrorHitPoint, mirrorHitNormal);
+                    particles.SetParticle(mirrorHitPoint, mirrorHitNormal, power);
+                    particles.SetParticle(mirrorHitPoint, mirrorHitNormal, power);
                     hitInfo = Physics2D.Raycast(mirrorHitPoint, outputDirection, MaxRayDistance, LayerDetection);
                     if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
                     colision = true;

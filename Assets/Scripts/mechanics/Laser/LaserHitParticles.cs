@@ -9,19 +9,22 @@ namespace Laser
         List<ParticleSystem> Particles= new List<ParticleSystem>();
         ParticleSystem.MainModule settings;
         ParticleSystem sample;
+        private Color color;
 
 
         public LaserHitParticles(ParticleSystem sample, Color color) {
             settings = sample.GetComponent<ParticleSystem>().main;
-            settings.startColor = new ParticleSystem.MinMaxGradient(color);
             sample.emission.Equals(false);
+            this.color = color;
             this.sample=sample;
         }
 
-        public void SetParticle(Vector2 position, Vector2 normal)
+        [System.Obsolete]
+        public void SetParticle(Vector2 position, Vector2 normal, float power)
         {
-            var buf = UnityEngine.Object.Instantiate(sample);
-           
+            ParticleSystem buf = UnityEngine.Object.Instantiate(sample);
+            color.a = power;
+            buf.startColor = color;
             buf.transform.position = position;
             Particles.Add(buf);
         }
