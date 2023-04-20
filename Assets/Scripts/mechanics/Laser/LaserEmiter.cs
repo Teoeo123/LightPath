@@ -82,15 +82,28 @@ public class LaserEmiter : MonoBehaviour
                 outputDirection = Vector2.Reflect((mirrorHitPoint - mirrorLastHitPoint).normalized, mirrorHitNormal);
 
                 lines.SetLine(mirrorLastHitPoint, mirrorHitPoint, power);
-
-                if (hitInfo.collider.CompareTag("Mirror"))
+                if(!hitInfo.collider.CompareTag("Glass")  && !hitInfo.collider.CompareTag("Orb"))
                 {
                     particles.SetParticle(mirrorHitPoint, mirrorHitNormal, power);
                     particles.SetParticle(mirrorHitPoint, mirrorHitNormal, power);
+                }
+
+                if (hitInfo.collider.CompareTag("Mirror"))
+                {
+                    
                     hitInfo = Physics2D.Raycast(mirrorHitPoint, outputDirection, MaxRayDistance, LayerDetection);
                     if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
                     colision = true;
                     recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power * AbsorptionRate);
+                }
+                else if (hitInfo.collider.CompareTag("Orb"))
+                {
+                    GlobalEvents.current.OnOrbHit(this, new ReciverHitEventArgs() {laserindex = index, hitobject = hitInfo.collider.GameObject() });
+                    outputDirection = mirrorHitPoint - mirrorLastHitPoint;
+                    hitInfo = Physics2D.Raycast(mirrorHitPoint+outputDirection*0.01f, outputDirection, MaxRayDistance, LayerDetection);
+                    if (hitInfo.collider != null) mirrorLastHitPoint = mirrorHitPoint;
+                    colision = true;
+                    recLightRef(hitInfo, mirrorLastHitPoint, mirrorHitPoint, mirrorHitNormal, outputDirection, colision, insideGlass, reflections - 1, power);
                 }
                 else if (hitInfo.collider.CompareTag("Reciver"))
                 {

@@ -26,7 +26,7 @@ public class Reciver : MonoBehaviour
     {
         if (index == args.laserindex && args.hitobject == thisObject)
         {
-            GetComponent<SpriteRenderer>().color = Color.black;
+            GetComponent<SpriteRenderer>().color = Color.red;
             Debug.Log(this + ": exit");
         }
     }
