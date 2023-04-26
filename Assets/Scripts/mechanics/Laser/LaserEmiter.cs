@@ -19,54 +19,63 @@ public class LaserEmiter : MonoBehaviour
     public float glow;
     [Range(0f,1f)]
     public float AbsorptionRate;
+    public string activationButton;
 
     private LaserHitParticles particles;
     private LaserBeam lines;
     private bool _reciverState = false;
     private bool _reciverLastState = false;
     private GameObject _reciver;
+    private bool on_off=false;
+    private bool battery=true;
 
     // Start is called before the first frame update
     void Start()
     {
         particles = new LaserHitParticles(particleSample,LineOfSight.startColor);
         lines = new LaserBeam(LineOfSight);
-        Physics2D.queriesStartInColliders = false;    
+        Physics2D.queriesStartInColliders = false;
+        GlobalEvents.current.BatteryDischarge += onBatDischarge;
+        GlobalEvents.current.MBtClick += onActvation;
     }
 
     // Update is called once per frame
     [Obsolete]
     void Update()
-    {   
-        RaycastHit2D hitInfo = Physics2D.Raycast((Vector2)transform.position, transform.right, MaxRayDistance, LayerDetection);
-        bool colision = false;
-        bool insideGlassState = false;
-        Vector2 mirrorHitPoint = Vector2.zero;
-        Vector2 mirrorHitNormal = Vector2.zero;
-        Vector2 outputDirection = Vector2.zero;
-        Vector2 mirrorLastHitPoint = (Vector2)transform.position;
+    {
+        if (on_off && battery)
+        {
 
-        recLightRef(
-            hitInfo, 
-            mirrorLastHitPoint, 
-            mirrorHitPoint, 
-            mirrorHitNormal, 
-            outputDirection, 
-            colision, 
-            insideGlassState, 
-            reflections, 
-            0.5f
-            );
 
-        if (_reciverState && !_reciverLastState)
-            GlobalEvents.current.OnReciverEnter(this, new ReciverHitEventArgs() { laserindex = index, hitobject=_reciver });
-        else if (!_reciverState && _reciverLastState)
-            GlobalEvents.current.OnReciverExit(this, new ReciverHitEventArgs() { laserindex = index, hitobject = _reciver });
-        _reciverLastState = _reciverState;
-        _reciverState = false;
-        lines.Update();
-        particles.Delete(glow);
+            RaycastHit2D hitInfo = Physics2D.Raycast((Vector2)transform.position, transform.right, MaxRayDistance, LayerDetection);
+            bool colision = false;
+            bool insideGlassState = false;
+            Vector2 mirrorHitPoint = Vector2.zero;
+            Vector2 mirrorHitNormal = Vector2.zero;
+            Vector2 outputDirection = Vector2.zero;
+            Vector2 mirrorLastHitPoint = (Vector2)transform.position;
 
+            recLightRef(
+                hitInfo,
+                mirrorLastHitPoint,
+                mirrorHitPoint,
+                mirrorHitNormal,
+                outputDirection,
+                colision,
+                insideGlassState,
+                reflections,
+                0.5f
+                );
+
+            if (_reciverState && !_reciverLastState)
+                GlobalEvents.current.OnReciverEnter(this, new ReciverHitEventArgs() { laserindex = index, hitobject = _reciver });
+            else if (!_reciverState && _reciverLastState)
+                GlobalEvents.current.OnReciverExit(this, new ReciverHitEventArgs() { laserindex = index, hitobject = _reciver });
+            _reciverLastState = _reciverState;
+            _reciverState = false;
+        }
+            lines.Update();
+            particles.Delete(glow);
     }
 
     [Obsolete]
@@ -175,6 +184,19 @@ public class LaserEmiter : MonoBehaviour
         else
             buforVector = hInfo.point;
         return Physics2D.Raycast(buforVector - direction.normalized / 100, -direction, MaxRayDistance, LayerDetection);
+    }
+
+    private void onBatDischarge(GameObject sender)
+    {
+        battery = false;
+    }
+
+    private void onActvation(object sender, MenuBtClickEventArgs args)
+    {
+        if(args.btName == activationButton)
+        {
+            on_off = !on_off;
+        }
     }
 
 }

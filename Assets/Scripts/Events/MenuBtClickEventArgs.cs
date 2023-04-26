@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 
-    public class MenuBtClickEventArgs
+
+    public class MenuBtClickEventArgs : EventArgs
     {
         public string btName { get; set; }
     }

@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.U2D;
 using UnityEngine.Rendering.Universal;
 
 public class OrbBh : MonoBehaviour
@@ -35,7 +32,6 @@ public class OrbBh : MonoBehaviour
 
     private void OnOrbHit(object sender, ReciverHitEventArgs args)
     {
-        Debug.Log("hit");
         if(args.hitobject == gameObject)
         {
             active = true;
