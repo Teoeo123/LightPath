@@ -5,7 +5,6 @@ public class Dragable : MonoBehaviour
 {
     public Rigidbody2D rigidBody;
     private float responsiveness;
-    private float resistance;
 
     private Vector3 windowOffset;
     private Vector3 fixPosition =Vector3.zero;
@@ -18,7 +17,8 @@ public class Dragable : MonoBehaviour
         GlobalEvents.current.MLock += MouseLock;
         GlobalEvents.current.MUnlock+= MouseUnlock;
         responsiveness = GlobalPhisicsValues.instance.responsiveness;
-        resistance = GlobalPhisicsValues.instance.resistance;
+        GetComponent<Rigidbody2D>().drag = GlobalPhisicsValues.instance.resistance;
+        GetComponent<Rigidbody2D>().angularDrag = GlobalPhisicsValues.instance.resistance;
         
     }
 
@@ -42,12 +42,7 @@ public class Dragable : MonoBehaviour
                 b = true;
             }
         }
-        else
-            rigidBody.velocity = rigidBody.velocity*resistance;
-        rigidBody.angularVelocity = rigidBody.angularVelocity*resistance;
-        if(Mathf.Abs(rigidBody.velocity.x) <0.01) rigidBody.velocity.Set(rigidBody.velocity.x,0);
-        if(Mathf.Abs(rigidBody.velocity.y) <0.01) rigidBody.velocity.Set(0,rigidBody.velocity.y);
-        if(Mathf.Abs(rigidBody.angularVelocity) <0.01) rigidBody.angularVelocity = 0;
+
     }
 
     private void OnMouseOver()

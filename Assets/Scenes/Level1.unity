@@ -901,7 +901,7 @@ MonoBehaviour:
   batteryBottom: {fileID: 561174617}
   activator: {fileID: 1299116844}
   LowBatteryColor: {r: 1, g: 0, b: 0, a: 1}
-  timeToDischarge: 100
+  timeToDischarge: 0.445
   batteryLevel: 1
 --- !u!1 &270716019
 GameObject:

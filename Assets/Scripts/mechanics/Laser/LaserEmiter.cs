@@ -66,6 +66,8 @@ public class LaserEmiter : MonoBehaviour
                 reflections,
                 0.5f
                 );
+        }
+        else _reciverState = false;
 
             if (_reciverState && !_reciverLastState)
                 GlobalEvents.current.OnReciverEnter(this, new ReciverHitEventArgs() { laserindex = index, hitobject = _reciver });
@@ -73,7 +75,7 @@ public class LaserEmiter : MonoBehaviour
                 GlobalEvents.current.OnReciverExit(this, new ReciverHitEventArgs() { laserindex = index, hitobject = _reciver });
             _reciverLastState = _reciverState;
             _reciverState = false;
-        }
+
             lines.Update();
             particles.Delete(glow);
     }
