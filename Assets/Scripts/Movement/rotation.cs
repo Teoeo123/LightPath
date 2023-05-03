@@ -7,6 +7,7 @@ public class rotation : MonoBehaviour
     public float rotationValue;
     public float precisionRotationValue;
     public float speedRotationValue;
+    public Rigidbody2D rigidBody;
     [Range(0,1)]
     public float slideValue;
 
@@ -14,11 +15,14 @@ public class rotation : MonoBehaviour
     private bool _isrrotational;
     void Start()
     {
+        rigidBody.angularDrag = GlobalPhisicsValues.instance.resistance;
     }
 
     // Update is called once per frame
     void Update()
     {
+        _rotation *= slideValue;
+        if (Mathf.Abs(_rotation)< 0.001f) _rotation= 0;
         if(_isrrotational )
         {
             if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
@@ -41,12 +45,8 @@ public class rotation : MonoBehaviour
             }
             else _isrrotational= false;
         }
-        transform.Rotate(0,0,_rotation); 
-        if(_rotation>0.1 || _rotation<-0.1)
-            _rotation *=  slideValue;
-        else
-            _rotation = 0;
-        //Debug.Log(_rotation);
+        rigidBody.angularVelocity = _rotation;
+
     }
 
     private void OnMouseOver()

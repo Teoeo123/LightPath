@@ -33,7 +33,7 @@ public class Dragable : MonoBehaviour
             {
                 if(b) GlobalEvents.current.OnMouseLock(this);
                 b= false;
-                rigidBody.velocity = (windowOffset + fixPosition - transform.position) * responsiveness;
+                rigidBody.velocity = (Vector2)(windowOffset + fixPosition - transform.position) * responsiveness;
             }
             else
             { 

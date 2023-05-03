@@ -82,9 +82,27 @@ public class GlobalEvents : MonoBehaviour
     //BatteryEvent
     public delegate void BatteryLvl(GameObject sender);
     public event BatteryLvl BatteryDischarge;
-    public void OnBatteryDischarge(GameObject sender)
+    public virtual void OnBatteryDischarge(GameObject sender)
     {
         if(BatteryDischarge!=null) BatteryDischarge(sender);
     }
+
+    //KeyEvents
+    public delegate void KeyHandler(KeyCode key);
+    public event KeyHandler KeyDown;
+    public event KeyHandler KeyUp;
+    public event KeyHandler Key;
+
+    public virtual void OnKeyDown(KeyCode key)
+    {
+        if (KeyDown != null) KeyDown(key);
+    } public virtual void OnKeyUp(KeyCode key)
+    {
+        if (KeyUp != null) KeyUp(key);
+    } public virtual void OnKey(KeyCode key)
+    {
+        if (Key != null) Key(key);
+    }
+
 
 }
