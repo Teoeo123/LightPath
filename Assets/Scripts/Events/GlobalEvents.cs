@@ -84,7 +84,7 @@ public class GlobalEvents : MonoBehaviour
     public event BatteryLvl BatteryDischarge;
     public virtual void OnBatteryDischarge(GameObject sender)
     {
-        if(BatteryDischarge!=null) BatteryDischarge(sender);
+        if (BatteryDischarge != null) BatteryDischarge(sender);
     }
 
     //KeyEvents
@@ -104,5 +104,13 @@ public class GlobalEvents : MonoBehaviour
         if (Key != null) Key(key);
     }
 
+    //End of Game
+    public delegate void EndGameCall(GameObject sender);
+    public event EndGameCall FullCharge;
+
+    public virtual void OnFullCharge(GameObject sender)
+    {
+        if(FullCharge != null) FullCharge(sender);
+    }
 
 }

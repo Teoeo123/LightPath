@@ -10,7 +10,8 @@ public class Reciver : MonoBehaviour
     private Color startingColor;
     private Gradient grad;
     private float charge;
-    float lastCharge;
+    private float lastCharge;
+    private bool active=false;
     // Start is called before the first frame update
     void Start()
     {
@@ -55,6 +56,11 @@ public class Reciver : MonoBehaviour
     private void Update()
     {
         GetComponent<SpriteRenderer>().color = grad.Evaluate(charge);
+        if (charge >= 1 && !active)
+        {
+            active = true;
+            GlobalEvents.current.OnFullCharge(gameObject);
+        }
     }
 
     // Update is called once per frame
