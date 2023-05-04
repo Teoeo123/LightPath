@@ -11,11 +11,14 @@ public class Dragable : MonoBehaviour
     private bool _dragable=false;
     private bool holding = true;
     private bool b=true;
+    private bool pause= false;
 
     private void Start()
     {
         GlobalEvents.current.MLock += MouseLock;
         GlobalEvents.current.MUnlock+= MouseUnlock;
+        GlobalEvents.current.Pause +=OnPause;
+        GlobalEvents.current.Continue += OnContinue;
         responsiveness = GlobalPhisicsValues.instance.responsiveness;
         GetComponent<Rigidbody2D>().drag = GlobalPhisicsValues.instance.resistance;
         GetComponent<Rigidbody2D>().angularDrag = GlobalPhisicsValues.instance.resistance;
@@ -25,24 +28,26 @@ public class Dragable : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(_dragable && holding)
+        if (!pause)
         {
-            
-            windowOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            if (Input.GetKey(KeyCode.Mouse0))
+            if (_dragable && holding)
             {
-                if(b) GlobalEvents.current.OnMouseLock(this);
-                b= false;
-                rigidBody.velocity = (Vector2)(windowOffset + fixPosition - transform.position) * responsiveness;
-            }
-            else
-            { 
-                _dragable = false;
-                if (!b && holding) GlobalEvents.current.OnMouseUnlock(this);
-                b = true;
+
+                windowOffset = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                if (Input.GetKey(KeyCode.Mouse0))
+                {
+                    if (b) GlobalEvents.current.OnMouseLock(this);
+                    b = false;
+                    rigidBody.velocity = (Vector2)(windowOffset + fixPosition - transform.position) * responsiveness;
+                }
+                else
+                {
+                    _dragable = false;
+                    if (!b && holding) GlobalEvents.current.OnMouseUnlock(this);
+                    b = true;
+                }
             }
         }
-
     }
 
     private void OnMouseOver()
@@ -72,6 +77,16 @@ public class Dragable : MonoBehaviour
     private void MouseUnlock(object sender)
     {
         holding =true;
+    }
+
+    private void OnPause()
+    {
+        pause= true;
+    }
+
+    private void OnContinue()
+    {
+        pause= false;
     }
 
 

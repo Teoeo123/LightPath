@@ -11,10 +11,13 @@ public class rotation : MonoBehaviour
     [Range(0,1)]
     public float slideValue;
 
+    private bool pause = false;
     private float _rotation=0;
     private bool _isrrotational;
     void Start()
     {
+        GlobalEvents.current.Pause += OnPause;
+        GlobalEvents.current.Continue += OnContinue;
         rigidBody.angularDrag = GlobalPhisicsValues.instance.resistance;
     }
 
@@ -23,7 +26,7 @@ public class rotation : MonoBehaviour
     {
         _rotation *= slideValue;
         if (Mathf.Abs(_rotation)< 0.001f) _rotation= 0;
-        if(_isrrotational )
+        if(_isrrotational && !pause )
         {
             if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
             {
@@ -53,4 +56,15 @@ public class rotation : MonoBehaviour
     {
         _isrrotational= true;
     }
+
+    private void OnPause()
+    {
+        pause = true;
+    }
+
+    private void OnContinue()
+    {
+        pause = false;
+    }
+
 }

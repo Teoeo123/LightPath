@@ -9,15 +9,18 @@ public class Active : MonoBehaviour
     public Material ActiveSh;
     private Material UnactiveSh;
     bool over;
+    private bool pause=false;
     // Start is called before the first frame update
     void Start()
     {
+        GlobalEvents.current.Pause += OnPause;
+        GlobalEvents.current.Continue += OnContinue;
         UnactiveSh = efector.material;
     }
 
     private void OnMouseOver()
     {
-        if(efector.material != ActiveSh)
+        if(efector.material != ActiveSh && !pause)
         {
             efector.material = ActiveSh;
             over= true;
@@ -34,5 +37,16 @@ public class Active : MonoBehaviour
         if(!Input.GetKey(KeyCode.Mouse0))
             efector.material = UnactiveSh;
         over= false;
+    }
+
+    private void OnPause()
+    {
+        pause = true;
+        efector.material = UnactiveSh;
+    }
+
+    private void OnContinue()
+    {
+        pause = false;
     }
 }

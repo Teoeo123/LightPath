@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ButtonControler : MonoBehaviour
@@ -8,5 +6,15 @@ public class ButtonControler : MonoBehaviour
     {
         ScenesManager.instance.LoadScene(ScenesManager.Scenes.MainMenu);
 
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void PressEscape()
+    {
+        GlobalEvents.current.OnKeyDown(KeyCode.Escape);
     }
 }

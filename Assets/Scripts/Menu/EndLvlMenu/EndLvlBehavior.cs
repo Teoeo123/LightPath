@@ -1,11 +1,15 @@
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
-using UnityEngine.UI;
 
-public class EndLvlBehaviour : MonoBehaviour
+
+public class EndLvlBehavior : MonoBehaviour
 {
-    [Range(-50f, 0f)]
-    public TextMesh levelNameHolder;
+    public TextMeshProUGUI levelNameHolder;
+    public TextMeshProUGUI levelTimeHolder;
+    public List<GameObject> orbs;
+    [Range(-1000f, 0f)]
     public float startPosition;
     public float animationSpeed;
     private float actualPosition;
@@ -14,7 +18,8 @@ public class EndLvlBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        transform.position = new Vector2(0, startPosition);
+
+        GetComponent<RectTransform>().localPosition = new Vector2(0, startPosition);
         actualPosition = startPosition;
         GlobalEvents.current.LevelEnd += OnLevelEnd;
     }
@@ -32,7 +37,7 @@ public class EndLvlBehaviour : MonoBehaviour
             else
             {
                 actualPosition += animationSpeed * Time.deltaTime;
-                transform.position = new Vector2(0,actualPosition);
+                GetComponent<RectTransform>().localPosition = new Vector2(0,actualPosition);
             }
         }
 
@@ -40,7 +45,22 @@ public class EndLvlBehaviour : MonoBehaviour
 
     private void OnLevelEnd(LevelEndEventArgs args)
     {
-        
+        anim = true;
+        levelNameHolder.text = args.LvlNumber.ToString();
+        levelTimeHolder.text = timeConverter(args.Time);
+        for(int a=0; a<orbs.Count; a++)
+        {
+            if(a<args.Orbs ) orbs[a].SetActive(true);
+            else orbs[a].SetActive(false);
+        }
     }
+
+    private string  timeConverter(float time)
+    {
+        time /= 60;
+        string ret = time.ToString("n2");
+        ret= ret.Replace(',', ':');
+        return ret;
+    }    
 
 }

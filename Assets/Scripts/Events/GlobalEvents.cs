@@ -85,7 +85,19 @@ public class GlobalEvents : MonoBehaviour
     {
         Key?.Invoke(key);
     }
+    //Pause
+    public delegate void Empty();
+    public event Empty Pause;
+    public event Empty Continue;
 
+    public virtual void OnGamePause()
+    {
+        Pause?.Invoke();
+    }
+    public virtual void OnGameReturn()
+    {
+        Continue?.Invoke();
+    }
     //End of Game
     public delegate void EndGameCall(GameObject sender);
     public event EndGameCall FullCharge;

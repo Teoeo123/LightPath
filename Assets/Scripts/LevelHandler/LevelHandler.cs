@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class LevelHandler : MonoBehaviour
@@ -23,6 +19,7 @@ public class LevelHandler : MonoBehaviour
 
     void Start()
     {
+        endLevelMenu.SetActive(true);
         reciverSet = new bool[listOfRecivers.Count];
         for(int i = 0; i < listOfRecivers.Count; i++) reciverSet[i] = false;
         orbSet= new bool[listOfOrbs.Count];
@@ -43,12 +40,13 @@ public class LevelHandler : MonoBehaviour
         }
         if (endGameCall && !endLvlAnnouncement)
         {
+            GlobalEvents.current.OnGamePause();
             endLvlAnnouncement= true;
             Debug.Log("lvl end with " + CountActiveOrbs() + " orbs");
-            Time.timeScale = 0.1f;
-            Time.fixedDeltaTime = 0.02f * Time.timeScale;
             endLevelMenu.SetActive(true);
             GlobalEvents.current.OnLevelEnd(new LevelEndEventArgs(Time.time - time, CountActiveOrbs(), ScenesManager.Scenes.Level1));
+            Time.timeScale = 0.1f;
+            Time.fixedDeltaTime = 0.02f * Time.timeScale;
         }
 
     }
@@ -62,6 +60,7 @@ public class LevelHandler : MonoBehaviour
                 Time.timeScale = 1;
                 Time.fixedDeltaTime = 0.02f;
                 popUpMenu.SetActive(false);
+                GlobalEvents.current.OnGameReturn();
             }
             else
             {
@@ -69,6 +68,7 @@ public class LevelHandler : MonoBehaviour
                 Time.timeScale = 0.1f;
                 Time.fixedDeltaTime = 0.02f * Time.timeScale;
                 popUpMenu.SetActive(true);
+                GlobalEvents.current.OnGamePause();
             }
         }
     }

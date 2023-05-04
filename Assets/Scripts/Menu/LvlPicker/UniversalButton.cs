@@ -8,19 +8,36 @@ public class UniversalButton : MonoBehaviour
     public Material UnActive;
     public Material Active;
 
+    private bool pause=false;
+    private void Start()
+    {
+        GlobalEvents.current.Pause += OnPause;
+        GlobalEvents.current.Continue += OnContinue;
+    }
+
     private void OnMouseEnter()
     {
-        GetComponent<SpriteRenderer>().material = Active;
+        if(!pause) GetComponent<SpriteRenderer>().material = Active;
     }
 
 
     private void OnMouseExit()
     {
-        GetComponent<SpriteRenderer>().material = UnActive;
+        if (!pause) GetComponent<SpriteRenderer>().material = UnActive;
     }
 
     private void OnMouseDown()
     {
-        GlobalEvents.current.OnMenuBtClick(this, new MenuBtClickEventArgs(){ btName = this.btName});
+        if (!pause) GlobalEvents.current.OnMenuBtClick(this, new MenuBtClickEventArgs(){ btName = this.btName});
     }
+    private void OnPause()
+    {
+        pause = true;
+    }
+
+    private void OnContinue()
+    {
+        pause = false;
+    }
+
 }

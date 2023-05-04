@@ -86,8 +86,12 @@ public class Reciver : MonoBehaviour
         if (index == args.laserindex && args.hitobject == thisObject)
         {
 
-            if (Time.time - lastCharge > speedOfCharging && charge<1f) charge += 0.01f;
-            else if(charge>1f) charge=1f;
+            if (Time.time - lastCharge > speedOfCharging && charge < 1f)
+            {
+                lastCharge= Time.time;
+                charge += 0.01f;
+            }
+            else if (charge > 1f) charge = 1f;
         }
     }
 }
