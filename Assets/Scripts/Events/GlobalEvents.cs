@@ -7,6 +7,7 @@ public class GlobalEvents : MonoBehaviour
     {
         current = this;
     }
+
     //ReciverEvents
     public delegate void ReciverEventEventHandler(object sender, ReciverHitEventArgs eventArgs);
     public event ReciverEventEventHandler ReciverHit;
@@ -16,34 +17,22 @@ public class GlobalEvents : MonoBehaviour
 
     public virtual void OnOrbHit(object sender, ReciverHitEventArgs eventArgs)
     {
-        if (OrbHit != null)
-        {
-            OrbHit(sender, eventArgs);
-        }
+        OrbHit?.Invoke(sender, eventArgs);
     }
 
     public virtual void OnReciverHit(object sender, ReciverHitEventArgs eventArgs)
     {
-        if (ReciverHit != null)
-        {
-            ReciverHit(sender, eventArgs);
-        }
+        ReciverHit?.Invoke(sender, eventArgs);
     }
 
     public virtual void OnReciverEnter(object sender, ReciverHitEventArgs eventArgs)
     {
-        if (ReciverEnter != null)
-        {
-            ReciverEnter(sender, eventArgs);
-        }
+        ReciverEnter?.Invoke(sender, eventArgs);
     }
 
     public virtual void OnReciverExit(object sender, ReciverHitEventArgs eventArgs)
     {
-        if (ReciverExit != null)
-        {
-            ReciverExit(sender, eventArgs);
-        }
+        ReciverExit?.Invoke(sender, eventArgs);
     }
 
     //MenuEvents
@@ -52,10 +41,7 @@ public class GlobalEvents : MonoBehaviour
 
     public virtual void OnMenuBtClick(object sender, MenuBtClickEventArgs eventArgs)
     {
-        if (MBtClick != null)
-        {
-            MBtClick(sender, eventArgs);
-        }
+        MBtClick?.Invoke(sender, eventArgs);
     }
 
     //MousDragInGameEvents
@@ -65,18 +51,12 @@ public class GlobalEvents : MonoBehaviour
 
     public virtual void OnMouseLock(object sender)
     {
-        if (MLock != null)
-        {
-            MLock(sender);
-        }
+        MLock?.Invoke(sender);
     }
 
     public virtual void OnMouseUnlock(object sender)
     {
-        if (MUnlock != null)
-        {
-            MUnlock(sender);
-        }
+        MUnlock?.Invoke(sender);
     }
 
     //BatteryEvent
@@ -84,7 +64,7 @@ public class GlobalEvents : MonoBehaviour
     public event BatteryLvl BatteryDischarge;
     public virtual void OnBatteryDischarge(GameObject sender)
     {
-        if (BatteryDischarge != null) BatteryDischarge(sender);
+        BatteryDischarge?.Invoke(sender);
     }
 
     //KeyEvents
@@ -95,22 +75,44 @@ public class GlobalEvents : MonoBehaviour
 
     public virtual void OnKeyDown(KeyCode key)
     {
-        if (KeyDown != null) KeyDown(key);
-    } public virtual void OnKeyUp(KeyCode key)
+        KeyDown?.Invoke(key);
+    }
+    public virtual void OnKeyUp(KeyCode key)
     {
-        if (KeyUp != null) KeyUp(key);
-    } public virtual void OnKey(KeyCode key)
+        KeyUp?.Invoke(key);
+    }
+    public virtual void OnKey(KeyCode key)
     {
-        if (Key != null) Key(key);
+        Key?.Invoke(key);
     }
 
     //End of Game
     public delegate void EndGameCall(GameObject sender);
     public event EndGameCall FullCharge;
+    public event EndGameCall OrbEnter;
+    public event EndGameCall OrbExit;
 
     public virtual void OnFullCharge(GameObject sender)
     {
-        if(FullCharge != null) FullCharge(sender);
+        FullCharge?.Invoke(sender);
+    }
+
+    public virtual void OnOrbEnter(GameObject sender)
+    {
+        OrbEnter?.Invoke(sender);
+    }
+
+    public virtual void OnOrbExit(GameObject sender)
+    {
+        OrbExit?.Invoke(sender);
+    }
+
+    public delegate void EndGameCallWithDetils(LevelEndEventArgs args);
+    public event EndGameCallWithDetils LevelEnd;
+
+    public virtual void OnLevelEnd(LevelEndEventArgs args)
+    { 
+        LevelEnd?.Invoke(args); 
     }
 
 }

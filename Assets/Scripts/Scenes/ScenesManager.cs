@@ -6,6 +6,11 @@ public class ScenesManager : MonoBehaviour
 {
     public static ScenesManager instance;
 
+    public void Start()
+    {
+        Time.timeScale = 1;
+        Time.fixedDeltaTime = 0.02f;
+    }
     private void Awake()
     {
         instance = this; 

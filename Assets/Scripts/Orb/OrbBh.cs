@@ -5,6 +5,7 @@ public class OrbBh : MonoBehaviour
 {
     // Start is called before the first frame update
     public bool active = false;
+    private bool messageSended = false;
     void Start()
     {
         GlobalEvents.current.OrbHit += OnOrbHit;
@@ -22,12 +23,26 @@ public class OrbBh : MonoBehaviour
         {
             GetComponent<SpriteRenderer>().color= Color.green;
             GetComponent<Light2D>().color= Color.green;
+            
+            if (!messageSended)
+            {
+                GlobalEvents.current.OnOrbEnter(gameObject);
+                messageSended = true;
+            }
         }
         else
         {
             GetComponent<SpriteRenderer>().color = Color.white;
             GetComponent<Light2D>().color = Color.white;
+            
+            if (messageSended)
+            {
+                GlobalEvents.current.OnOrbExit(gameObject);
+                messageSended = false;
+            }
         }
+
+
     }
 
     private void OnOrbHit(object sender, ReciverHitEventArgs args)
